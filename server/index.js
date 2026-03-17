@@ -32,13 +32,16 @@ function resolveAnetCreds(req) {
   return {
     loginId: (req.body.loginId || process.env.AUTHORIZE_NET_API_LOGIN_ID || '').trim(),
     transKey: (req.body.transactionKey || process.env.AUTHORIZE_NET_TRANSACTION_KEY || '').trim(),
-    env: req.body.env || 'production',
+    env: req.body.env || process.env.AUTHORIZE_NET_ENV || 'production',
   }
 }
 
 async function ghlGet(path, params, apiKey) {
   const { data } = await axios.get(`${GHL_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${apiKey}` },
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      Version: '2021-07-28',
+    },
     params,
   })
   return data
