@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: rgb(3 7 18);
+    color: rgb(243 244 246);
+    margin: 0;
+  }
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .card {
+    background-color: rgb(17 24 39);
+    border: 1px solid rgb(31 41 55);
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+  .btn-primary {
+    background-color: rgb(79 70 229);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover {
+    background-color: rgb(67 56 202);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background-color: rgb(31 41 55);
+    color: rgb(229 231 235);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-secondary:hover {
+    background-color: rgb(55 65 81);
+  }
+  .input {
+    background-color: rgb(31 41 55);
+    border: 1px solid rgb(55 65 81);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: rgb(243 244 246);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .input:focus {
+    outline: none;
+    ring: 2px solid rgb(99 102 241);
+    border-color: rgb(99 102 241);
+  }
+  .input::placeholder {
+    color: rgb(107 114 128);
+  }
+  .label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(156 163 175);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
