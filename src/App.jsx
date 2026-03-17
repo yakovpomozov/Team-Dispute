@@ -1,69 +1,39 @@
+import { useState } from 'react'
 import './index.css'
 import Layout from './components/Layout'
 import Dashboard from './views/Dashboard'
-import EntryView from './views/EntryView'
-import LeaderboardView from './views/LeaderboardView'
-import HistoryView from './views/HistoryView'
-import SettingsView from './views/SettingsView'
-import { useStore } from './store/useStore'
+import Pipeline from './views/Pipeline'
+import RevenueLog from './views/RevenueLog'
+import Settings, { loadSettings } from './views/Settings'
+
+function useSettings() {
+  const [settings, setSettings] = useState(() => loadSettings())
+
+  const updateSettings = (newSettings) => {
+    setSettings(newSettings)
+    localStorage.setItem('td_settings', JSON.stringify(newSettings))
+  }
+
+  return { settings, updateSettings }
+}
 
 export default function App() {
-  const store = useStore()
-
-  const {
-    entries, settings, activeView, setActiveView,
-    addEntry, updateEntry, deleteEntry, updateSettings,
-    todayEntries, weekEntries, monthEntries,
-    dailyTotals, weeklyTotals, monthlyTotals,
-    repLeaderboard, monthlyRevenue, revenueGoalPct,
-    filterEntries, sumEntries,
-  } = store
+  const [activeView, setActiveView] = useState('dashboard')
+  const { settings, updateSettings } = useSettings()
 
   return (
     <Layout activeView={activeView} setActiveView={setActiveView}>
       {activeView === 'dashboard' && (
-        <Dashboard
-          dailyTotals={dailyTotals}
-          weeklyTotals={weeklyTotals}
-          monthlyTotals={monthlyTotals}
-          monthlyRevenue={monthlyRevenue}
-          revenueGoalPct={revenueGoalPct}
-          repLeaderboard={repLeaderboard}
-          settings={settings}
-          todayEntries={todayEntries}
-          setActiveView={setActiveView}
-        />
+        <Dashboard settings={settings} />
       )}
-      {activeView === 'entry' && (
-        <EntryView
-          settings={settings}
-          addEntry={addEntry}
-          todayEntries={todayEntries}
-          setActiveView={setActiveView}
-        />
+      {activeView === 'pipeline' && (
+        <Pipeline settings={settings} />
       )}
-      {activeView === 'leaderboard' && (
-        <LeaderboardView
-          repLeaderboard={repLeaderboard}
-          settings={settings}
-          monthlyRevenue={monthlyRevenue}
-          revenueGoalPct={revenueGoalPct}
-        />
-      )}
-      {activeView === 'history' && (
-        <HistoryView
-          entries={entries}
-          deleteEntry={deleteEntry}
-          settings={settings}
-          filterEntries={filterEntries}
-          sumEntries={sumEntries}
-        />
+      {activeView === 'revenue' && (
+        <RevenueLog settings={settings} />
       )}
       {activeView === 'settings' && (
-        <SettingsView
-          settings={settings}
-          updateSettings={updateSettings}
-        />
+        <Settings settings={settings} updateSettings={updateSettings} />
       )}
     </Layout>
   )
