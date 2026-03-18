@@ -180,11 +180,12 @@ app.get('/api/ghl/dashboard', async (req, res) => {
 
     const { kenUserId, yashaUserId } = req.query
 
-    // Today's date range
+    // Today's date range — UTC-safe to avoid midnight boundary issues
     const now = new Date()
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
-    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString()
-    const todayTs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+    const todayUTC = now.toISOString().split('T')[0]
+    const todayStart = `${todayUTC}T00:00:00.000Z`
+    const todayEnd = `${todayUTC}T23:59:59.999Z`
+    const todayTs = new Date(`${todayUTC}T00:00:00.000Z`).getTime()
 
     // Fetch in parallel: appointments, conversations, closes
     const apptParams = { locationId, startDate: todayStart, endDate: todayEnd }
@@ -284,11 +285,12 @@ app.post('/api/anet/transactions', async (req, res) => {
     const url = env === 'sandbox' ? ANET_SANDBOX : ANET_PROD
     const auth = { name: loginId, transactionKey: transKey }
 
-    // Get current month range
+    // Get current month range — UTC-safe so month boundary never slips into previous month
     const now = new Date()
-    const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-      .toISOString().split('T')[0] + 'T00:00:00Z'
-    const today = now.toISOString().split('T')[0] + 'T23:59:59Z'
+    const y = now.getUTCFullYear()
+    const m = String(now.getUTCMonth() + 1).padStart(2, '0')
+    const firstOfMonth = `${y}-${m}-01T00:00:00Z`
+    const today = `${now.toISOString().split('T')[0]}T23:59:59Z`
 
     // Get settled batches for the month
     const batchRes = await axios.post(url, {
@@ -375,7 +377,8 @@ app.post('/api/anet/transactions', async (req, res) => {
       const dayKey = d.toISOString().split('T')[0]
       const todayKey = new Date().toISOString().split('T')[0]
       const weekStart = new Date(now)
-      weekStart.setDate(now.getDate() - now.getDay())
+      weekStart.setUTCDate(now.getUTCDate() - now.getUTCDay())
+      weekStart.setUTCHours(0, 0, 0, 0)
 
       if (dayKey === todayKey) {
         byDay[dayKey] = (byDay[dayKey] || 0) + tx.amount
