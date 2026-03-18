@@ -2,6 +2,10 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import axios from 'axios'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 dotenv.config()
 
@@ -398,6 +402,12 @@ app.post('/api/anet/transactions', async (req, res) => {
     console.error('Authorize.net error:', err.response?.data || err.message)
     res.status(err.response?.status || 500).json({ error: err.response?.data || err.message })
   }
+})
+
+// Serve React frontend in production
+app.use(express.static(path.join(__dirname, '../dist')))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'))
 })
 
 app.listen(PORT, () => {
